@@ -6,6 +6,8 @@ class TanhLayerRecurrent(Layer):
 
     def __init__(self):
         super().__init__()
+        self.__prevIn = []
+        self.__prevOut = []
         return
 
     def forward(self, dataIn):

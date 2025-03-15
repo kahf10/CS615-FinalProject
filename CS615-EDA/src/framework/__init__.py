@@ -4,3 +4,4 @@ from .LogisticSigmoidLayerRecurrent import LogisticSigmoidLayerRecurrent
 from .TanhLayerRecurrent import TanhLayerRecurrent
 
 from .StaticSquaredError import StaticSquaredError
+from .InitialHiddenState import InitialHiddenState

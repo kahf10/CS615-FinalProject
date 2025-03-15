@@ -17,12 +17,15 @@ class FullyConnectedLayerRecurrent(Layer):
             self.__biases = np.random.random(size = (1, sizeOut)) * 2 * range - range
         
         self.__weights_accumulator = np.zeros(shape = (sizeIn, sizeOut))
-        self.__biases_accumulator = None
+        self.__biases_accumulator = np.zeros(shape = (1, sizeOut))
         if not bias:
-            self.__biases = np.zeros(shape = (1, sizeOut))
-            self.__biases_accumulator = np.zeros(shape = (1, sizeOut))
+            self.__biases = None
+            self.__biases_accumulator = None
             
         self.len_accumulated = 0
+
+        self.__prevIn = []
+        self.__prevOut = []
         return
 
     def getWeights(self):
@@ -44,7 +47,7 @@ class FullyConnectedLayerRecurrent(Layer):
 
     def forward(self, dataIn):
         self.__prevIn.append(dataIn)
-        X = dataIn @ self.__weights + self.__biases
+        X = dataIn @ self.__weights + self.__biases if self.bias else dataIn @ self.__weights
         self.__prevOut.append(X)
         self.len_accumulated += 1
         return X

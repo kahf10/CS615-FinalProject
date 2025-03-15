@@ -30,6 +30,9 @@ class GRU(Layer):
         # no setup
         
         self.__prevIn_hidden = []
+
+        self.__prevIn = []
+        self.__prevOut = []
         
     def setPrevIn_hidden(self, dataIn_hidden):
         self.__prevIn_hidden = dataIn_hidden
@@ -75,7 +78,8 @@ class GRU(Layer):
         h_prevOut = self.__prevOut.pop()
 
         # Intermediate outputs 
-        z = self.z_activation.getPrevOut()[-1]
+        # z = self.z_activation.getPrevOut()[-1]
+        z = self.z_activation.
         r = self.r_activation.getPrevOut()[-1]
         h_hat = self.h_hat_activation.getPrevOut()[-1]
 

@@ -6,6 +6,7 @@ class InitialHiddenState(Layer):
 
     def __init__(self, hiddenSize, xavier_initialization=True):
         super().__init__()
+
         
         if xavier_initialization:
             self.__hidden = np.zeros(shape = (1, hiddenSize))
@@ -15,6 +16,8 @@ class InitialHiddenState(Layer):
         
         self.__hidden_accumulator = np.zeros(shape = (1, hiddenSize))
         self.len_accumulated = 0
+        self.__prevIn = []
+        self.__prevOut = []
         
     def forward(self, dataIn=None):
         self.__prevIn.append(dataIn)

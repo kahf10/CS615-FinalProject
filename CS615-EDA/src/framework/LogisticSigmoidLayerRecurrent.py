@@ -6,7 +6,10 @@ class LogisticSigmoidLayerRecurrent(Layer):
 
     def __init__(self):
         super().__init__()
+        self.__prevIn = []
+        self.__prevOut = []
         return
+
 
     def forward(self, dataIn):
         self.__prevIn.append(dataIn)
