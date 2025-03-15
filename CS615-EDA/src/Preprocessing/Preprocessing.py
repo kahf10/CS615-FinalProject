@@ -94,8 +94,7 @@ class Preprocessing:
         train_batch = self.tensor[:, train_indices, :]
         val_batch = self.tensor[:, val_indices, :]
 
-        print(
-            f"Generated 1 full training batch of shape {train_batch.shape} and 1 validation batch of shape {val_batch.shape}.")
+        print(f"Generated 1 full training batch of shape {train_batch.shape} and 1 validation batch of shape {val_batch.shape}.")
 
         return train_batch, val_batch
 
