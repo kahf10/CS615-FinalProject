@@ -4,7 +4,7 @@ from framework import *
 
 
 class Model:
-    def __init__(self, filepath, num_epochs=1000, learning_rate=0.01, validation_interval=3, hidden_size=32):
+    def __init__(self, filepath, num_epochs=1000, learning_rate=0.01, period=[1, 3, 5, 7, 9, 11], hidden_size=20):
         """
         Initializes the GRU model.
 
@@ -13,13 +13,15 @@ class Model:
         self.num_epochs = num_epochs
         self.learning_rate = learning_rate
         self.hidden_size = hidden_size
-        self.gru = None
+        self.gru = []
+        self.FC = []
         self.h_prev = None
         self.train_X = None
         self.train_y = None
         self.val_x = None
         self.val_y = None
-
+        self.period = period
+        self.num_models = len(period)
 
     def loadData(self):
         preprocessor = Preprocessing(self.filepath)
@@ -42,38 +44,50 @@ class Model:
         print(f"Data Loaded. Train shape {self.train_X.shape} Validation shape {self.val_X.shape} ")
 
     def initializeModel(self, input_size, batch_size):
-        self.gru = GRU(input_size, self.hidden_size)
-        self.FC = FullyConnectedLayerRecurrent(self.hidden_size, input_size)
-        self.h_initial_layer = InitialHiddenState(batch_size, self.hidden_size)
+        self.gru = [GRU(input_size, self.hidden_size) for _ in range(self.num_models)]
+        self.FC = [FullyConnectedLayerRecurrent(self.hidden_size, input_size) for _ in range(self.num_models)]
+        self.h_initial_layer = [InitialHiddenState(batch_size, self.hidden_size) for _ in range(self.num_models)]
 
     def trainModel(self):
-
+        def average(arr):
+            return sum(arr) / len(arr)
         for epoch in range(self.num_epochs):
-            h_prev = self.h_initial_layer.forward()
+            h_prev = [h_initial_layer.forward() for h_initial_layer in self.h_initial_layer]
+            output = [None for _ in range(self.num_models)]
 
             gradients = []
             loss = 0.0
             for step in range(self.train_X.shape[0]):
-                h_prev  = self.gru.forward(self.train_X[step], h_prev)
+                for i in range(self.num_models):
+                    if step % self.period[i] == 0:
+                        h_prev[i] = self.gru[i].forward(self.train_X[step], h_prev[i])
+                        output[i] = self.FC[i].forward(h_prev[i])
+                total_output = average(output)
 
-                output = self.FC.forward(h_prev)
-                loss += StaticSquaredError.eval(self.train_y[step], output)
-                gradient = StaticSquaredError.gradient(self.train_y[step], output)
-
-
+                loss += StaticSquaredError.eval(self.train_y[step], total_output)
+                gradient = StaticSquaredError.gradient(self.train_y[step], total_output)
+                  
                 gradients.append(gradient)
 
-            gradIn = np.zeros(shape=self.gru.getPrevOut()[-1].shape)
+            gradIn = [np.zeros(shape=gru.getPrevOut()[-1].shape) for gru in self.gru]
+            gradIn_to_FC = [np.zeros(shape=gradients[-1].shape) for _ in range(self.num_models)]
             for step in range(self.train_X.shape[0] - 1, -1, -1):
-                gradIn_to_FC = gradients.pop()
-                gradIn_to_gru = self.FC.backward_and_calculateUpdateWeights(gradIn_to_FC, self.learning_rate)
-                gradIn += gradIn_to_gru
-                _, gradIn = self.gru.backward_and_calculateUpdateWeights(gradIn, self.learning_rate)
-            self.h_initial_layer.backward_and_calculateUpdateWeights(gradIn, self.learning_rate)
+                gradient = gradients.pop() / self.num_models
+                for i in range(self.num_models):
+                    gradIn_to_FC[i] += gradient
+                    if step % self.period[i] == 0:
+                        gradIn_to_gru = self.FC[i].backward_and_calculateUpdateWeights(gradIn_to_FC[i], self.learning_rate)
+                        gradIn[i] += gradIn_to_gru
+                        _, gradIn[i] = self.gru[i].backward_and_calculateUpdateWeights(gradIn[i], self.learning_rate)
+                        
+                        gradIn_to_FC[i] = np.zeros(shape=gradIn_to_FC[i].shape)
+            for i, grad in enumerate(gradIn):
+                self.h_initial_layer[i].backward_and_calculateUpdateWeights(grad, self.learning_rate)
 
-            self.FC.performUpdateWeights()
-            self.gru.performUpdateWeights()
-            self.h_initial_layer.performUpdateWeights()
+            for i in range(self.num_models):
+                self.FC[i].performUpdateWeights()
+                self.gru[i].performUpdateWeights()
+                self.h_initial_layer[i].performUpdateWeights()
 
             print(f"Epoch number {epoch+1}, Loss {loss}")
 
