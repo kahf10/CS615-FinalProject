@@ -27,6 +27,18 @@ class FullyConnectedLayerRecurrent(Layer):
         self.__prevIn = []
         self.__prevOut = []
         return
+    
+    def setPrevIn(self,dataIn):
+        self.__prevIn = dataIn
+    
+    def setPrevOut(self, out):
+        self.__prevOut = out
+    
+    def getPrevIn(self):
+        return self.__prevIn
+    
+    def getPrevOut(self):
+        return self.__prevOut
 
     def getWeights(self):
         return self.__weights

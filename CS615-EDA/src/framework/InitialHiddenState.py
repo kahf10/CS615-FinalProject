@@ -4,10 +4,10 @@ from .Layer import Layer
 class InitialHiddenState(Layer):
     epsilon = 1e-8
 
-    def __init__(self, hiddenSize, xavier_initialization=True):
+    def __init__(self, batch_size, hiddenSize, xavier_initialization=True):
         super().__init__()
 
-        
+        self.batch_size = batch_size
         if xavier_initialization:
             self.__hidden = np.zeros(shape = (1, hiddenSize))
         else:
@@ -19,9 +19,21 @@ class InitialHiddenState(Layer):
         self.__prevIn = []
         self.__prevOut = []
         
+    def setPrevIn(self,dataIn):
+        self.__prevIn = dataIn
+    
+    def setPrevOut(self, out):
+        self.__prevOut = out
+    
+    def getPrevIn(self):
+        return self.__prevIn
+    
+    def getPrevOut(self):
+        return self.__prevOut
+        
     def forward(self, dataIn=None):
         self.__prevIn.append(dataIn)
-        X = self.__hidden
+        X = np.repeat(self.__hidden, self.batch_size, axis=0)
         self.__prevOut.append(X)
         self.len_accumulated += 1
         return X
