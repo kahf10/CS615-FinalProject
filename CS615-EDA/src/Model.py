@@ -4,7 +4,7 @@ from framework import *
 
 
 class Model:
-    def __init__(self, filepath, num_epochs=1000, learning_rate=0.01, period=[1, 3, 5, 7, 9, 11], hidden_size=20):
+    def __init__(self, filepath, num_epochs=1000, learning_rate=0.01, period=[1, 3, 5, 7, 11], hidden_size=20):
         """
         Initializes the GRU model.
 
