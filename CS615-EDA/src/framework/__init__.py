@@ -1,4 +1,6 @@
 from .GRU import GRU
 from .FullyConnectedLayerRecurrent import FullyConnectedLayerRecurrent
 from .LogisticSigmoidLayerRecurrent import LogisticSigmoidLayerRecurrent
-from TanhLayerRecurrent import TanhLayerRecurrent
+from .TanhLayerRecurrent import TanhLayerRecurrent
+
+from .StaticSquaredError import StaticSquaredError

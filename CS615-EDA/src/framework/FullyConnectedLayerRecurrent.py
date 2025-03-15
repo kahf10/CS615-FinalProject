@@ -21,6 +21,8 @@ class FullyConnectedLayerRecurrent(Layer):
         if not bias:
             self.__biases = np.zeros(shape = (1, sizeOut))
             self.__biases_accumulator = np.zeros(shape = (1, sizeOut))
+            
+        self.len_accumulated = 0
         return
 
     def getWeights(self):
@@ -44,6 +46,7 @@ class FullyConnectedLayerRecurrent(Layer):
         self.__prevIn.append(dataIn)
         X = dataIn @ self.__weights + self.__biases
         self.__prevOut.append(X)
+        self.len_accumulated += 1
         return X
     
     def gradient(self):
@@ -73,12 +76,14 @@ class FullyConnectedLayerRecurrent(Layer):
         return gradOut
     
     def performUpdateWeights(self):
-        if len(self.__prevOut) == 0:
+        length = self.len_accumulated
+        if length == 0:
             raise ValueError("self.__num_accumulated is zero. You have not accumulated gradients")
-        self.__weights += self.__weights_accumulator / self.__num_accumulated
+        self.__weights += self.__weights_accumulator / length
         if self.bias:
-            self.__biases += self.__biases_accumulator / self.__num_accumulated
+            self.__biases += self.__biases_accumulator / length
         
         self.__weights_accumulator = np.zeros(shape = self.__weights_accumulator.shape)
         self.__biases_accumulator = np.zeros(shape = self.__biases_accumulator.shape) if self.bias else None
-
+        self.len_accumulated = 0
+        return
