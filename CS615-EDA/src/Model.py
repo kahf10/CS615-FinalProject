@@ -1,6 +1,5 @@
 import numpy as np
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 import threading

@@ -132,7 +132,6 @@ class GRU(Layer):
         return grad_x, grad_h_prev
 
     def performUpdateWeights(self, learning_rate=0.01):
-        # Adaptive Learning Rate Decay (Optional)
         # Update gate vector
         self.z_data_in.performUpdateWeights(learning_rate)
         self.z_hidden_in.performUpdateWeights(learning_rate)

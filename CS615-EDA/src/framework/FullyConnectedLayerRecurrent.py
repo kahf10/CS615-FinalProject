@@ -96,9 +96,8 @@ class FullyConnectedLayerRecurrent(Layer):
         if length == 0:
             raise ValueError("self.__num_accumulated is zero. You have not accumulated gradients")
 
-        # Adaptive Learning Rate Decay
         # decay_rate = 0.999
-        # learning_rate *= decay_rate  # Apply decay to learning rate
+        # learning_rate *= decay_rate
 
         # Apply weight updates
         self.__weights += (self.__weights_accumulator / length) * learning_rate
