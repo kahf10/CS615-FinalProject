@@ -131,20 +131,20 @@ class GRU(Layer):
 
         return grad_x, grad_h_prev
 
-    def performUpdateWeights(self, learning_rate=0.01):
+    def performUpdateWeights(self):
         # Update gate vector
-        self.z_data_in.performUpdateWeights(learning_rate)
-        self.z_hidden_in.performUpdateWeights(learning_rate)
+        self.z_data_in.performUpdateWeights()
+        self.z_hidden_in.performUpdateWeights()
         self.z_activation.performUpdateWeights()
 
         # Reset gate vector
-        self.r_data_in.performUpdateWeights(learning_rate)
-        self.r_hidden_in.performUpdateWeights(learning_rate)
+        self.r_data_in.performUpdateWeights()
+        self.r_hidden_in.performUpdateWeights()
         self.r_activation.performUpdateWeights()
 
         # Candidate activation vector
-        self.h_hat_data_in.performUpdateWeights(learning_rate)
-        self.h_hat_hidden_in.performUpdateWeights(learning_rate)
+        self.h_hat_data_in.performUpdateWeights()
+        self.h_hat_hidden_in.performUpdateWeights()
         self.h_hat_activation.performUpdateWeights()
 
         return

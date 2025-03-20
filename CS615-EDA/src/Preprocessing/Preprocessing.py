@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class Preprocessing:
-    def __init__(self, filepath, num_samples=1000, events_per_sample=100, feature_count=16, interval=3, train_split=0.8):
+    def __init__(self, filepath, num_samples=800, events_per_sample=150, feature_count=16, interval=3, train_split=0.8):
         """
         Initializes the preprocessing class.
 

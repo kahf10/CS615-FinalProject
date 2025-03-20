@@ -75,6 +75,9 @@ class FullyConnectedLayerRecurrent(Layer):
         pass
 
     def backward_and_calculateUpdateWeights(self, gradIn, eta):
+
+        # Remove eta
+
         prevIn = self.__prevIn.pop()
         prevOut = self.__prevOut.pop()
 
@@ -92,6 +95,9 @@ class FullyConnectedLayerRecurrent(Layer):
         return gradOut
 
     def performUpdateWeights(self, learning_rate=0.01):
+        # Use adam optimizer for updating weights
+        # Add parameters here for momentum updates for weights and biases
+
         length = self.len_accumulated
         if length == 0:
             raise ValueError("self.__num_accumulated is zero. You have not accumulated gradients")
@@ -100,9 +106,9 @@ class FullyConnectedLayerRecurrent(Layer):
         # learning_rate *= decay_rate
 
         # Apply weight updates
-        self.__weights += (self.__weights_accumulator / length) * learning_rate
+        self.__weights += (self.__weights_accumulator / length)
         if self.bias:
-            self.__biases += (self.__biases_accumulator / length) * learning_rate
+            self.__biases += (self.__biases_accumulator / length)
 
         # Reset accumulators
         self.__weights_accumulator = np.zeros_like(self.__weights)
