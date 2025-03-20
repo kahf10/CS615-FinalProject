@@ -176,30 +176,25 @@ def normalizeStep(data):
 
 
 def plotScatterPredictions(x_preds, y_preds):
-    x_preds = np.array(x_preds)  # Shape: (50, 99, 160, 16)
-    y_preds = np.array(y_preds)  # Shape: (50, 99, 160, 16)
+    x_preds = np.array(x_preds)  # (50, 99, 160, 16)
+    y_preds = np.array(y_preds)  # (50, 99, 160, 16)
 
-    x_preds = np.mean(x_preds, axis=-1)  # Now shape: (50, 99, 160)
-    y_preds = np.mean(y_preds, axis=-1)  # Now shape: (50, 99, 160)
+    x_preds = np.mean(x_preds, axis=-1)  # (50, 99, 160)
+    y_preds = np.mean(y_preds, axis=-1)  # (50, 99, 160)
 
-    x_flat = x_preds.flatten()  # Shape: (50 * 99 * 160,)
-    y_flat = y_preds.flatten()  # Shape: (50 * 99 * 160,)
+    x_flat = x_preds.flatten()  # (50 * 99 * 160,)
+    y_flat = y_preds.flatten()  # (50 * 99 * 160,)
 
     num_steps, num_start_times, num_samples = x_preds.shape  # (50, 99, 160)
-    timesteps = np.repeat(np.arange(num_steps), num_start_times * num_samples)  # Matches (50 * 99 * 160,)
+    timesteps = np.repeat(np.arange(num_steps), num_start_times * num_samples)  # (50 * 99 * 160,)
 
-    # Scatter plot
     plt.figure(figsize=(8, 6))
-    scatter = plt.scatter(y_flat, x_flat, c=timesteps, cmap="viridis", alpha=0.6)
+    scatter = plt.scatter(y_flat, x_flat, c=timesteps, cmap="viridis", alpha=0.5)
 
-    # Add color bar
     cbar = plt.colorbar(scatter)
     cbar.set_label("Prediction Step")
 
-    # Add perfect prediction reference line
-    plt.plot([y_flat.min(), y_flat.max()], [y_flat.min(), y_flat.max()], linestyle="--", color="red",
-             label="Perfect Predictions")
-
+    plt.plot([y_flat.min(), y_flat.max()], [y_flat.min(), y_flat.max()], linestyle="--", color="red", label="Perfect Predictions")
     plt.xlabel("Actual Values")
     plt.ylabel("Predicted Values")
     plt.title("Scatter Plot:")
