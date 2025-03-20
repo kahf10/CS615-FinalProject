@@ -9,7 +9,7 @@ from framework import *
 loss_history = []
 
 class Model:
-    def __init__(self, filepath, num_epochs=100, learning_rate=0.01, period=[1, 3, 5, 7, 11], hidden_size=20):
+    def __init__(self, filepath, num_epochs=2, learning_rate=0.01, period=[1, 3, 5, 7, 11], hidden_size=20):
         """
         Initializes the GRU model.
 
@@ -125,8 +125,11 @@ class Model:
         x_predictions = [[] for _ in range(self.prediction_steps)]
         y_predictions = [[] for _ in range(self.prediction_steps)]
 
+
         for step in range(self.val_X.shape[0] - self.prediction_steps):
             dataIn = self.val_X[step]
+            storedModelGru = [self.gru[i].deepCopy() for i in range(self.num_models)]
+            storedModelFC = [self.FC[i].deepCopy() for i in range(self.num_models)]
             for j in range(self.prediction_steps):
                 for i in range(self.num_models):
                     if step % self.period[i] == 0:
@@ -138,6 +141,9 @@ class Model:
                 x_predictions[j].append(total_output)
                 y_predictions[j].append(real_output)
                 dataIn = total_output
+            for i in range(self.num_models):
+                self.gru[i].restore(storedModelGru[i])
+                self.FC[i].restore(storedModelFC[i])
 
         return x_predictions, y_predictions
 

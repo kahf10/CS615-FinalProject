@@ -25,6 +25,10 @@ class FullyConnectedLayerRecurrent(Layer):
 
         self.len_accumulated = 0
 
+        self.inputSize = sizeIn
+        self.outputSize = sizeOut
+        self.xavierInit = xavier_initialization
+
         self.__prevIn = []
         self.__prevOut = []
         return
@@ -115,4 +119,27 @@ class FullyConnectedLayerRecurrent(Layer):
         self.__biases_accumulator = np.zeros_like(self.__biases) if self.bias else None
         self.len_accumulated = 0
         return
+
+    def deepCopy(self):
+
+        fc = FullyConnectedLayerRecurrent(self.inputSize, self.outputSize, self.xavierInit, self.bias)
+        fc.__prevIn = self.__prevIn.copy()
+        fc.__prevOut = self.__prevOut.copy()
+        fc.__weights = self.__weights.copy()
+        fc.__biases = self.__biases.copy() if self.__biases is not None else None
+        fc.__weights_accumulator = self.__weights_accumulator.copy()
+        fc.__biases_accumulator = self.__biases_accumulator.copy() if self.__biases_accumulator is not None else None
+        fc.len_accumulated = self.len_accumulated if self.len_accumulated is not None else None
+
+        return fc
+
+    def restore(self, fc):
+        self.__prevIn = fc.__prevIn.copy()
+        self.__prevOut = fc.__prevOut.copy()
+        self.__weights = fc.__weights.copy()
+        self.__biases = fc.__biases.copy()
+
+        self.__weights_accumulator = fc.__weights_accumulator.copy()
+        self.__biases_accumulator = fc.__biases_accumulator.copy()
+        self.len_accumulated = fc.len_accumulated
 

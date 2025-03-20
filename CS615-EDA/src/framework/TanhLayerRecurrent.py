@@ -54,3 +54,10 @@ class TanhLayerRecurrent(Layer):
     
     def performUpdateWeights(self):
         return
+
+    def deepCopy(self):
+        tanh = TanhLayerRecurrent()
+        tanh.prevIn = self.__prevIn.copy()
+        tanh.prevOut = self.__prevOut.copy()
+
+        return tanh
