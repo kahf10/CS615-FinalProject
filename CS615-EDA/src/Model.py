@@ -9,7 +9,7 @@ from framework import *
 loss_history = []
 
 class Model:
-    def __init__(self, filepath, num_epochs=2, learning_rate=0.01, period=[1, 3, 5, 7, 11], hidden_size=20):
+    def __init__(self, filepath, num_epochs=100, learning_rate=0.01, period=[1, 3, 5], hidden_size=20, random_seed=42):
         """
         Initializes the GRU model.
 
@@ -23,11 +23,12 @@ class Model:
         self.h_prev = None
         self.train_X = None
         self.train_y = None
-        self.val_x = None
+        self.val_X = None
         self.val_y = None
         self.period = period
         self.num_models = len(period)
         self.prediction_steps = 50
+        self.random_seed = random_seed
 
     @staticmethod
     def average(arr):
@@ -148,7 +149,7 @@ class Model:
         return x_predictions, y_predictions
 
 def main():
-    model = Model("../data/TOS Kaggle data week ending 2022 01 07.csv")
+    model = Model("./data/Jan2022Data.csv")
     model.loadData()
     model.initializeModel(16)
     model.trainModel()
@@ -163,12 +164,8 @@ def computeMape(x_preds, y_preds):
         x_step = np.array(x_preds[step])  # Shape: (99, 160, 16)
         y_step = np.array(y_preds[step])  # Shape: (99, 160, 16)
 
-
-        x_step = np.mean(x_step, axis=-1)  # Now shape (99, 160)
-        y_step = np.mean(y_step, axis=-1)  # Now shape (99, 160)
-
-        x_step = normalizeStep(x_step)
-        y_step = normalizeStep(y_step)
+        # x_step = normalizeStep(x_step)
+        # y_step = normalizeStep(y_step)
         mask = y_step != 0
 
         mape_per_step = np.mean(np.abs((y_step[mask] - x_step[mask]) / y_step[mask])) * 100

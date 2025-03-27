@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class Preprocessing:
-    def __init__(self, filepath, num_samples=800, events_per_sample=150, feature_count=16, interval=3, train_split=0.8):
+    def __init__(self, filepath, num_samples=1500, events_per_sample=300, feature_count=16, interval=3, train_split=0.8):
         """
         Initializes the preprocessing class.
 
@@ -32,10 +32,12 @@ class Preprocessing:
         total_required_rows = self.num_samples * self.events_per_sample
 
         # Load only the necessary rows
+        fulldf = pd.read_csv(self.filepath)
+        shape = fulldf.shape
         df = pd.read_csv(self.filepath, nrows=total_required_rows)
 
         self.data = df
-        print(f"Loaded dataset with shape: {df.shape} (Trimmed to {total_required_rows} rows)")
+        print(f"Loaded dataset with shape: {shape} (Trimmed to {df.shape})")
 
     # 2. Remove Unnecessary Columns
     def removeColumns(self):
