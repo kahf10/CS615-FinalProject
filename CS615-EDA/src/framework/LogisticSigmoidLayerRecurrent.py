@@ -50,3 +50,10 @@ class LogisticSigmoidLayerRecurrent(Layer):
     
     def performUpdateWeights(self):
         return
+
+    def deepCopy(self):
+        logit = LogisticSigmoidLayerRecurrent()
+        logit.prevIn = self.__prevIn.copy()
+        logit.prevOut = self.__prevOut.copy()
+
+        return logit

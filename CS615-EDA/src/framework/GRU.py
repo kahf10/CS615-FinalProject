@@ -25,9 +25,12 @@ class GRU(Layer):
         self.h_hat_data_in = FullyConnectedLayerRecurrent(inputSizeIn, hiddenSize)
         self.h_hat_hidden_in = FullyConnectedLayerRecurrent(hiddenSize, hiddenSize, bias=False)
         self.h_hat_activation = TanhLayerRecurrent()
-        
+
         # output vector
         # no setup
+
+        self.inputSizeIn = inputSizeIn
+        self.hiddenSize = hiddenSize
         
         self.__prevIn_hidden = []
 
@@ -130,23 +133,61 @@ class GRU(Layer):
         grad_h_prev = dL_dh_prev_out + dL_dh_candidate + grad_hidden_r + grad_hidden_z
 
         return grad_x, grad_h_prev
-    
+
     def performUpdateWeights(self):
-        # update gate vector
+        # Update gate vector
         self.z_data_in.performUpdateWeights()
         self.z_hidden_in.performUpdateWeights()
         self.z_activation.performUpdateWeights()
-        
-        # reset gate vector
+
+        # Reset gate vector
         self.r_data_in.performUpdateWeights()
         self.r_hidden_in.performUpdateWeights()
         self.r_activation.performUpdateWeights()
-        
-        # candidate activation vector
+
+        # Candidate activation vector
         self.h_hat_data_in.performUpdateWeights()
         self.h_hat_hidden_in.performUpdateWeights()
         self.h_hat_activation.performUpdateWeights()
-        
-        # output vector
-        # no update
+
         return
+
+    def deepCopy(self):
+        gru = GRU(self.inputSizeIn, self.hiddenSize)
+
+        gru.prevIn = self.__prevIn.copy()
+        gru.prevOut = self.__prevOut.copy()
+        gru.prevIn_hidden = self.__prevIn_hidden.copy()
+
+        gru.z_data_in = self.z_data_in.deepCopy()
+        gru.z_hidden_in = self.z_hidden_in.deepCopy()
+        gru.z_activation = self.z_activation.deepCopy()
+
+        gru.r_data_in = self.r_data_in.deepCopy()
+        gru.r_hidden_in = self.r_hidden_in.deepCopy()
+        gru.r_activation = self.r_activation.deepCopy()
+
+        gru.h_hat_data_in = self.h_hat_data_in.deepCopy()
+        gru.h_hat_hidden_in = self.h_hat_hidden_in.deepCopy()
+        gru.h_hat_activation = self.h_hat_activation.deepCopy()
+
+        return gru
+
+    def restore(self, gru):
+        self.__prevIn = gru.__prevIn.copy()
+        self.__prevOut = gru.__prevOut.copy()
+        self.__prevIn_hidden = gru.__prevIn_hidden.copy()
+
+        self.z_data_in = gru.z_data_in.deepCopy()
+        self.z_hidden_in = gru.z_hidden_in.deepCopy()
+        self.z_activation = gru.z_activation.deepCopy()
+
+        self.r_data_in = gru.r_data_in.deepCopy()
+        self.r_hidden_in = gru.r_hidden_in.deepCopy()
+        self.r_activation = gru.r_activation.deepCopy()
+
+        self.h_hat_data_in = gru.h_hat_data_in.deepCopy()
+        self.h_hat_hidden_in = gru.h_hat_hidden_in.deepCopy()
+        self.h_hat_activation = gru.h_hat_activation.deepCopy()
+
+
